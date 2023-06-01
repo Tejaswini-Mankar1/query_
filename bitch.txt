@@ -1,0 +1,54 @@
+--CREATE TABLE Employee(ename varchhar2(10),city varchar2(10));
+ --Create TABLE Company(cname cvarchar2(10),city varchar2(10));
+ --create table Manager(cname varchar2(10),mname varchar2(10));
+--create table Emp_Shift(ename varchar2(10),shift varchar2(1));
+CREATE TABLE Emp_Company(ename varchar2(10),cname varchar2(10),salary number(7,2),jdate date);
+update Employee_Company set Employee_Company.salary=(select Employee_Company.salary from Employee_Company where Employee_Company.ename='Sunil')-100 where Employee_Company.ename='Vijay' and exists(select Employee.ename from Employee where Employee.ename='Vijay' and Employee.city='Madras' and Employee.city in(select Employee.city from Employee where Employee.ename='Sunil')); 
+--INSERT INTO Employee VALUES ('Amit','Nagpur'),('Sunil','Madras'),('Vijay','Madras'),('Jay','Bombay');
+ --INSERT INTO Company values('ACC','Delhi'),('TATA','Bombay');
+ --insert into Emp_Company values('Amit','TATA',30000,'30/4/20'),('Sunil','ACC',24000,'2/5/20'),('Vijay','ACC',30000,'3/5/20'),('Jay','ACC',25000,'1/5/20');
+--insert into Emp_Shift values('Amit','A'),('Sunil','B'),('Vijay','B'),('Jay','A');
+--insert into Manager values('TATA','Amit'),('ACC','Vijay');
+--update Emp_Company set salary=salary-100 where ename='Vijay' and exists(select ename from Employee where ename='Vijay' and city='Madras' and city in (select city from Employee where ename='Sunil'));
+--update Emp_Company set cname='TATA' where cname='ACC' and salary>8000;
+--update Emp_Company set salary=(select salary from Emp_Company where ename='Vijay')-100 where ename='Vijay';
+--update Emp_Company set salary=(select salary from Emp_Company where ename='Sunil')+100 where ename='Sunil';
+delete from Emp_Company where salary>8000;
+
+
+
+--practical 3
+--query 1
+--select e.ename,e.city from Employee e where e.ename in (select ec.ename from Emp_Company ec where ec.cname='ACC')
+
+--query 2
+--select e.ename from Employee e where e.city='Bombay'and e.ename in(select ec.ename from Emp_Company ec where ec.cname in(select c.cname from Company c where c.city='Delhi'));
+--select e.ename from Employee e where exists(select ec.ename from Emp_Company ec where exists(select c.cname from Company c where c.city='Delhi' and e.city='Bombay' and e.ename=ec.ename));
+
+--query 3
+select e2.ename from Employee e2 where e2.city in(select e1.city from Employee e1 where e1.ename='Sunil');
+
+write a program that returns the lesser of two given numbers if both numbers are even,but returns greater if one or both are odd.
+
+--create table Sailors(sid varchar2(10),sname varchar2(10),rating number(7,2),age number(7,2));
+--create table Boats (bid varchar2(10), bname varchar2(10),color varchar2(10));
+--create table Reserves (sid varchar2(10),bid varchar2(10),day date);
+--insert into Sailors values('s1','Raju','10','23');
+--insert into Sailors values('s2','Rani','9','24'),('s3','Ramesh','9','25');
+--insert into Boats values('007','A','Red'),('008','B','Green'),('009','C','Blue');
+--insert into Reserves values('s1','007','1-1-2022'),
+('s1','008','1-1-2022'),('s2','008','2-2-2022');
+
+--select r.sid from Reserves r,Boats b where b.color='Red' and b.bid=r.bid union select r.sid from Reserves r,Boats b where b.color='Green' and r.bid=b.bid; 
+
+select s.sname (from Sailors s , Reserves r , Boats b where b.color='Red' b.bid=r.bid r.sid=s.sid) 
+intersect 
+select s.sname (from  Sailors s , Reserves r , Boats b where b.color='Green' b.bid=r.bid r.sid=s.sid);
+--create table Sailors(sid varchar2(10),sname varchar2(10),rating number(7,2),age number(7,2));
+--create table Boats (bid varchar2(10), bname varchar2(10),color varchar2(10));
+--create table Reserves (sid varchar2(10),bid varchar2(10),day date);
+--insert into Sailors values('s1','Raju','10','23');
+--insert into Sailors values('s2','Rani','9','24'),('s3','Ramesh','9','25');
+--insert into Boats values('007','A','Red'),('008','B','Green'),('009','C','Blue');
+--insert into Reserves values('s1','007','1-1-2022'),
+('s1','008','1-1-2022'),('s2','008','2-2-2022');

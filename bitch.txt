@@ -1,3 +1,4 @@
+PRACTICAL 2
 --CREATE TABLE Employee(ename varchhar2(10),city varchar2(10));
  --Create TABLE Company(cname cvarchar2(10),city varchar2(10));
  --create table Manager(cname varchar2(10),mname varchar2(10));
@@ -17,7 +18,7 @@ delete from Emp_Company where salary>8000;
 
 
 
---practical 3
+PRACTICAL 3
 --query 1
 --select e.ename,e.city from Employee e where e.ename in (select ec.ename from Emp_Company ec where ec.cname='ACC')
 
@@ -28,8 +29,9 @@ delete from Emp_Company where salary>8000;
 --query 3
 select e2.ename from Employee e2 where e2.city in(select e1.city from Employee e1 where e1.ename='Sunil');
 
-write a program that returns the lesser of two given numbers if both numbers are even,but returns greater if one or both are odd.
 
+
+PRACTICAL 4
 --create table Sailors(sid varchar2(10),sname varchar2(10),rating number(7,2),age number(7,2));
 --create table Boats (bid varchar2(10), bname varchar2(10),color varchar2(10));
 --create table Reserves (sid varchar2(10),bid varchar2(10),day date);

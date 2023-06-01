@@ -1,0 +1,93 @@
+
+PRACTICAL 2
+
+1.	Before executing the first query:
+ 
+After executing the first query:
+update Emp_Company set salary=salary-100 where ename='Vijay' and exists(select ename from Employee where ename='Vijay' and city='Madras' and city in (select city from Employee where ename='Sunil'));
+ 
+2.	Before executing the second query:
+ 
+After executing the second query:
+update Emp_Company set cname='TATA' where cname='ACC' and salary>8000;
+ 
+3.	Before executing the third query:
+ 
+After executing the third query:
+update Emp_Company set salary=(select salary from Emp_Company where ename='Vijay')-100 where ename='Vijay';
+AND
+--update Emp_Company set salary=(select salary from Emp_Company where ename='Sunil')+100 where ename='Sunil';
+ 
+
+4.	Before executing the fourth query:
+ 
+After executing the fourth query:
+delete from Emp_Company where salary>8000;
+ 
+
+
+                                     Practical 3
+
+Question 1: Find employee names and cities they live in for the employee working in company ‘ACC’.
+Query select e.ename , e.city  from Employee e where e.ename in (select ec.ename from Emp_Company  ec  where  ec.cname='ACC' );
+Output
+ 
+
+
+Question 2: List the employees living in city ‘Bombay’ and those having company located in ‘Delhi’.
+
+Queryselect e.ename from Employee e where e.city='Bombay' and e.ename in(select ec.ename from Emp_Company ec where ec.cname in(select c.cname from Company c where c.city='Delhi'));
+Output 
+
+Question 3 : List the names of the employees living in the same city where ‘Sunil’ is also living.
+
+Query select e2.ename from Employee e2 where exists (select e1.city from Employee e where e1.ename=’Sunil’ and e2.city=e1.city);
+Output 
+
+
+
+
+
+
+
+
+Practical 4
+Question 1: Find sailor ids who have reserved Red or Green coloured boats.
+Query select s.sid from Sailors s,Reserves r,Boats b where (b.color='Red' or b.color='Green') and b.bid=r.bid and r.sid=s.sid;
+Output 
+Question 2: Find sailor ids who have reserved Red as well as Green coloured boats.
+Query select s.sid from Reserves r1,Boats b1,Reserves r2,Boats b2, Sailors s where (b1.color='Red' and b1.bid=r1.bid and r1.sid=s.sid) and (b2.color='Green' and b2.bid=r2.bid and r2.sid=s.sid );
+Output 
+Question 3: Find sailor ids who have reserved Red coloured boats but not Green coloured boats.
+Queryselect s.sid from Sailors s ,Reserves r1,Reserves r2,Boats b1,Boats b2 where (b1.color='Red' and b1.bid=r1.bid and r1.sid=s.sid) except (b2.color='Green' and b2.bid=r.bid and r2.sid=s.sid);
+Output 
+Practical 5
+Question 1: Find the employee names having max salary
+Query->select ename from Emp_Company where salary in(select max(salary) from Emp_Company);
+ 
+
+Question 2: List the name of employees having max salary in their company.
+Query -> select ename from Emp_Company where salary in(select max(salary) from Emp_Company );
+ 
+
+Question 3: Find the average salary of each company except ‘ACC’.
+Query-> select avg(salary) from Emp_Company where cname!=’ACC’ group by cname;
+ 
+Question 4: Find the average salary of company only for those employees living in ‘Delhi’.
+Query->select avg(salary) from Emp_Company where ename in(select ename from Employee where city=’Delhi’);
+ 
+(since we haven’t made any entry of employee living ‘Delhi’, the output was empty).
+
+Question 5: Find the name of the company having highest average salary.
+Query-> select cname , avg(salary) from Emp_Company group by cname having avg(salary)>(select avg(salary) from Emp_Company group by cname);
+ 
+
+
+
+
+Question 6: List the number of employees living in ‘Bombay’.
+Query-> select count (ename) from Employee where city=’Bombay’;
+ 
+
+Question 7: List the name of the employees with their living cities having max salary in company ‘TATA’.
+Query-> select e.ename,e.city from Employee e where e.ename in(select ec.ename from Emp_Company ec where ec.cname='TATA' and ec.salary in (select max(ec1.salary)from Emp_Company ec1)); 

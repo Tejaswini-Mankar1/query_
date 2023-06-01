@@ -60,7 +60,9 @@ Query select s.sid from Reserves r1,Boats b1,Reserves r2,Boats b2, Sailors s 
 Output 
 Question 3: Find sailor ids who have reserved Red coloured boats but not Green coloured boats.
 Queryselect s.sid from Sailors s ,Reserves r1,Reserves r2,Boats b1,Boats b2 where (b1.color='Red' and b1.bid=r1.bid and r1.sid=s.sid) except (b2.color='Green' and b2.bid=r.bid and r2.sid=s.sid);
-Output 
+Output
+
+
 Practical 5
 Question 1: Find the employee names having max salary
 Query->select ename from Emp_Company where salary in(select max(salary) from Emp_Company);
@@ -83,11 +85,162 @@ Query-> select cname , avg(salary) from Emp_Company group by cname having avg(sa
  
 
 
-
-
 Question 6: List the number of employees living in ‘Bombay’.
 Query-> select count (ename) from Employee where city=’Bombay’;
  
 
 Question 7: List the name of the employees with their living cities having max salary in company ‘TATA’.
 Query-> select e.ename,e.city from Employee e where e.ename in(select ec.ename from Emp_Company ec where ec.cname='TATA' and ec.salary in (select max(ec1.salary)from Emp_Company ec1)); 
+
+
+PRACTICAL 6
+RELATION = {"V", "W", "X", "Y", "Z"}
+FUNCTIONAL_DEPENDENCIES = {
+    ("VY", "W"),
+    ("WX" , "Z"),
+    ("ZY" , "V")
+}
+
+def find_closure(functional_dependencies, closure_of):
+    closure = set(closure_of)
+    while True:
+        closure_old = closure.copy()
+        for X,Y in functional_dependencies:
+            if set(X).issubset(closure):
+                closure |= set(Y)
+        if closure == closure_old:
+                break
+    return closure
+
+
+print(find_closure(FUNCTIONAL_DEPENDENCIES,"XY"))
+print(find_closure(FUNCTIONAL_DEPENDENCIES,"XYV"))
+print(find_closure(FUNCTIONAL_DEPENDENCIES,"XYW"))
+print(find_closure(FUNCTIONAL_DEPENDENCIES,"XYZ"))
+
+
+
+PRACTICAL 9
+
+from copy import deepcopy
+from re import sub
+O_REL = ['A', 'B', 'C', 'D']
+FD = [
+['AB', 'B'],
+['B', 'C'],
+['C', 'D'],
+]
+NEW_REL = [
+['A', 'B'],
+['B', 'C'],
+['C', 'D'],
+]
+def in_count(_itr: list[str], elem: str):
+return sum([1 for i in _itr if elem in i])
+def initialize(old_rel, new_rel):
+table: list[list[str]] = [["" for _ in old_rel] for _ in new_rel]
+for row_index, row in enumerate(table):
+for col_index, col in enumerate(row):
+if old_rel[col_index] in new_rel[row_index]:
+table[row_index][col_index] = f"a({col_index})"
+else:
+table[row_index][col_index] = f"b({row_index},{col_index})"
+return table
+def attrs_intersection(attrs: list[str]) -> str:
+for s in attrs:
+# remove content inside parenthesis
+s = sub(r'\([^)]*\)', '', s)
+s = s.replace(" ", "")
+return 'a' if all([True if 'a' in attr else False for attr in attrs]) else
+'b'
+def get_lhs_values(dep, table, old_rel):
+check_lhs: list[str] = []
+compound_attr: list[list[str]] = []
+for attr in dep[0]:
+compound_attr.append([row[old_rel.index(attr)] for row in table])
+for i, c_attr in enumerate(map(list, zip(*compound_attr))):
+check_lhs.append(attrs_intersection(c_attr))
+# at this point we have a comparison list, that we can use to check for
+the step 2 conditions
+return check_lhs
+def print_table(table: list[list[str]]):
+pretty_table = ""
+for row in table:
+pretty_table += "|"
+for columns in row:
+pretty_table += f"{columns}\t|"
+pretty_table += "\n"
+length = len(pretty_table.split("\n")[0].expandtabs())
+print("_" * length)
+print(pretty_table)
+def woolman_algorithm_test(old_rel: list[str], new_rel: list[list[str]], fd:
+list[list[str]]) -> bool:
+# Step 1: Initialize
+table = initialize(old_rel, new_rel)
+print("Initial Table: ")
+print_table(table)
+while True:
+compare_table = deepcopy(table)
+for dep in fd:
+print(f"Checking FD: {dep[0]} -> {dep[1]}")
+check_lhs = get_lhs_values(dep, table, old_rel)
+rows_to_change = [i for i, x in enumerate(check_lhs) if x == "a"]
+columns_to_change = [old_rel.index(attr) for attr in dep[1]]
+column_values = ["X" for _ in columns_to_change]
+if check_lhs.count("a") <= 1:
+print("No common attributes found")
+continue
+for column_index in columns_to_change:
+test_column = [row[column_index] for row in table if
+table.index(row) in rows_to_change]
+# Find if there is "A" in the columns we wish to update, else get
+the first "B" value
+if in_count(test_column, "a") >= 1:
+column_values[columns_to_change.index(column_index)] =
+f"a({column_index})"
+else:
+column_values[columns_to_change.index(column_index)] =
+test_column[0]
+# Do da update
+for row_index, row in enumerate(table):
+for col_index, col in enumerate(row):
+if col_index in columns_to_change and row_index in
+rows_to_change:
+table[row_index][col_index] =
+column_values[columns_to_change.index(col_index)]
+# Print Table
+print_table(table)
+if compare_table == table:
+for row in table:
+if in_count(row, "a") == len(row):
+print(f"Found a row with all 'a' values. Row:
+{table.index(row) + 1}")
+return True
+print("No more changes possible.")
+return False
+if __name__ == '__main__':
+if woolman_algorithm_test(O_REL, NEW_REL, FD):
+print("The given relation decomposition is LOSSLESS.")
+else:
+print("The given relation decomposition is LOSSY.")
+
+
+PRACTICAL 10
+DECLARE
+ total_salary NUMBER := 0;
+ employee_count NUMBER := 0;
+ average_salary NUMBER;
+BEGIN
+ -- Calculate total salary and count of employees
+ FOR emp IN (SELECT salary FROM employees) LOOP
+ total_salary := total_salary + emp.salary;
+ employee_count := employee_count + 1;
+ END LOOP;
+ -- Calculate average salary
+ IF employee_count > 0 THEN
+ average_salary := total_salary / employee_count;
+ DBMS_OUTPUT.PUT_LINE('Average Salary: ' || average_salary);
+ ELSE
+ DBMS_OUTPUT.PUT_LINE('No employees found.');
+ END IF;
+END;
